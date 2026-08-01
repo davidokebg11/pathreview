@@ -28,3 +28,31 @@ Ran the exact repro snippet from the issue (`FaithfulnessChecker().check('Knows 
 
 **Blockers or open questions:**
 Still deciding the exact form of the new threshold rule (see Risks & unknowns in PLAN.md) — want to check a couple of existing tests before finalizing in Week 9.
+
+### Check-in 2 (end of week)
+
+**PR link:** https://github.com/davidokebg11/pathreview/pull/1
+
+**Branch:** fix/152-faithfulness-short-claims
+
+**What you built:** Replaced the fixed `>= 2` meaningful-token-overlap
+threshold in `_is_supported()` with a scaled rule
+(`ceil(len(claim_meaningful_tokens) / 2)`), fixed punctuation-stripping
+in tokenization, and changed `check()` to average continuous per-claim
+support ratios instead of counting booleans — the last change was
+required after discovering the original boolean-count aggregation could
+never produce a partial score for single-claim feedback.
+
+**Tests added or updated:** Added `test_single_meaningful_token_claim_supported`
+and `test_single_meaningful_token_claim_not_supported` in
+`test_faithfulness_checker.py`. All three originally-failing tests
+(`test_partial_support_returns_middle_score`, `test_multiple_context_chunks`,
+`test_multiple_claims_varying_support`) now pass.
+
+**Self-review confirmation:** [x] make check passes (no new errors from
+this change — pre-existing repo-wide lint debt unrelated to this fix)
+[x] make test-unit passes (23 passed, 1 pre-existing unrelated failure
+documented above)
+
+**Draft PR feedback received from:** none yet — opened as ready for
+review due to time constraints; will address any comments promptly
