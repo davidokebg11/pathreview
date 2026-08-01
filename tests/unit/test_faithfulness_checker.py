@@ -195,7 +195,7 @@ class TestFaithfulnessChecker:
         claim = "The project is well documented"
         context = "The project is poorly documented"  # Opposite meaning but same stop words
 
-        supported = checker._is_supported(claim, context)
+        checker._is_supported(claim, context)
 
         # Despite word overlap, should look for meaningful overlap (not stop words)
         # This depends on implementation
@@ -205,7 +205,7 @@ class TestFaithfulnessChecker:
         claim = "Python expertise"
         context = "Python"  # Only one word match
 
-        checker._is_supported(claim, context)
+        supported = checker._is_supported(claim, context)
 
         assert isinstance(supported, bool)
         # Need at least 2 meaningful tokens for support
@@ -272,4 +272,3 @@ class TestFaithfulnessChecker:
 
         assert isinstance(supported, bool)
         assert supported is False
-
