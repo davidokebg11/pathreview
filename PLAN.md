@@ -32,3 +32,32 @@ Files I expect to touch:
 - Claim made up entirely of stopwords (zero meaningful tokens) → need to confirm/preserve existing expected behavior
 - Long claims with high raw token overlap but low proportional overlap → confirm they aren't over-relaxed by the new rule
 - Context chunk with `None` as the text value → known separate bug, should not be introduced or worsened by this change
+
+
+
+### Plan (revised after implementation — Week 9)
+1. Replace the fixed `len(meaningful_overlap) >= 2` threshold with 
+   `required_overlap = math.ceil(len(claim_meaningful_tokens) / 2)`.
+   This scales naturally: a 1-2 token claim needs only 1 overlapping token; 
+   a 6-token claim needs 3.
+2. Fix tokenization to strip punctuation (`re.findall(r"\w+", text.lower())` 
+   instead of `.split()`) — trailing commas/periods were silently breaking 
+   legitimate word matches.
+3. Add a new `_claim_support_ratio()` method returning a continuous 0.0-1.0 
+   score using the same required_overlap formula, and update `check()` to 
+   average these ratios across claims instead of counting booleans.
+4. Re-run tests and confirm the three target tests pass without breaking 
+   any previously-passing test.
+5. Add new unit tests for single-meaningful-token claims (supported and 
+   unsupported cases).
+6. Run `make check`.
+
+### Scope note (added Week 9)
+Original plan assumed the fix was contained to `_is_supported()`'s threshold 
+and wouldn't touch `check()`'s aggregation. During implementation, 
+`test_partial_support_returns_middle_score` proved this couldn't hold: with 
+single-claim feedback, `check()`'s boolean-count formula can only ever 
+return 0.0 or 1.0, never a partial value. Fixing this required changing 
+`check()` to average continuous per-claim ratios instead of counting 
+booleans. `_is_supported()`'s public boolean behavior is unchanged for all 
+existing direct callers/tests.
