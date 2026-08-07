@@ -56,3 +56,37 @@ documented above)
 
 **Draft PR feedback received from:** none yet — opened as ready for
 review due to time constraints; will address any comments promptly
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes  [x] No — still awaiting review
+
+**Summary of feedback:**
+Not applicable — reviewer feedback is not a feature in Summer 2026
+(per course note).
+
+**How you responded:**
+N/A
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+Diagnosing the actual bug turned out to be harder than fixing it. My Week 8 reproduction correctly identified the symptom (short claims scoring 0.0) and even correctly identified the buggy line, but my PLAN.md's fix — scaling the overlap threshold — didn't actually work for one of the three tests it was supposed to fix. I only found out because I traced through `test_partial_support_returns_middle_score` by hand and realized `check()`'s formula (`supported/len(claims)`) could only ever return 0.0 or 1.0 for single-claim feedback — no threshold change could produce a partial score. The real fix needed changing how `check()` aggregates scores, which my plan explicitly said was out of scope.
+
+**What did you learn about working in a large codebase?**
+A written plan is a hypothesis, not a guarantee — even one based on real reproduction work. In my own projects I'd just start coding and adjust as I go; here, I'd already committed to a specific, documented fix boundary in PLAN.md, and discovering that boundary was wrong mid-implementation meant updating documentation, not just code. I also learned that "passing tests" isn't the same as "correct diagnosis" — three tests were failing for what looked like the same reason, but one of them was failing for a structurally different reason than the other two.
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for mechanical work — tracing through token sets by hand across multiple test cases, writing the boilerplate for new test functions, and catching a punctuation-in-tokenization bug I hadn't noticed. It fell short at the actual judgment call: whether to expand the fix's scope. That decision — and documenting why — was mine to make, and I don't think an AI tool should be the one deciding that a fix's boundaries were wrong.
+
+**What would you do differently if you started over?**
+I'd hand-trace at least one example claim through my proposed fix formula during Week 8 planning, before writing PLAN.md — not just re-run the existing tests. If I had run the numbers on `test_partial_support_returns_middle_score` before committing to a plan, I'd have caught the aggregation problem a week earlier.
+
+**What are you most proud of from this module?**
+Catching the plan's flaw myself instead of shipping a fix that passed 2 of 3 target tests and calling it done. It would have been easy to declare victory once `test_partial_support_returns_middle_score` was the only one still failing — but the whole point of writing tests first is that you don't get to be satisfied with "mostly."
+
+
